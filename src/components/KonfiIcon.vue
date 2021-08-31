@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: "KonfiLogo"
+  name: "KonfiIcon"
 }
 </script>
 
