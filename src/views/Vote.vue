@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <VotingComponent></VotingComponent>
+    <VotingComponent :room-name="roomName"></VotingComponent>
   </v-container>
 </template>
 
