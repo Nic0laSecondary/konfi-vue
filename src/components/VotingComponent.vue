@@ -49,7 +49,7 @@ export default {
     return{
       currentVote: 0,
       hasVoted: false,
-      serverUrl: "http://localhost:8000",
+      serverUrl: process.env.VUE_APP_API_URL,
     }
   },
   methods:{
@@ -60,7 +60,7 @@ export default {
           method: 'post',
           url: this.serverUrl + '/vote/?roomName='+this.roomName+'&vote='+this.currentVote,
         }).then(response => {
-          if (response.status == 200) {
+          if (response.status === 200) {
             console.log('true')
           }
           console.log('requested')

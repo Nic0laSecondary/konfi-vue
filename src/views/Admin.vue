@@ -40,7 +40,7 @@ export default {
       snacktext: 'error',
       roomName: "",
       isLoading: false,
-      serverAdress: "http://localhost:8000",
+      serverAdress: process.env.VUE_APP_API_URL,
       roomExits: false
     }
   },
@@ -48,12 +48,11 @@ export default {
     createRoom(){
       this.isLoading = true;
       console.log(this.roomName);
-      axios.get(this.serverAdress + '/test/')
       axios({
         method: 'post',
         url: this.serverAdress + '/add/?roomName='+this.roomName,
       }).then(response => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           this.roomExits = true;
         }
         else {
