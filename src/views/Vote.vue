@@ -17,7 +17,6 @@
 import VotingComponent from "@/components/VotingComponent";
 import VoteRoomFinder from "@/components/VoteRoomFinder";
 import axios from "axios";
-import Config from "@/config.json";
 export default {
   name: "Vote",
   components:{VotingComponent,VoteRoomFinder},
@@ -34,7 +33,7 @@ export default {
   },
   data: function () {
     return{
-      serverUrl: Config.API_URL,
+      serverUrl: process.env.VUE_APP_API_URL,
       roomNames: [],
       roomName: '',
       isParameterChecking: true,

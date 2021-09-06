@@ -41,7 +41,6 @@
 
 <script>
 import axios from "axios";
-import Config from "@/config.json";
 
 export default {
   name: "VotingComponent",
@@ -50,7 +49,7 @@ export default {
     return{
       currentVote: 0,
       hasVoted: false,
-      serverUrl: Config.API_URL,
+      serverUrl: process.env.VUE_APP_API_URL,
       myFakeCookie: 0,
     }
   },

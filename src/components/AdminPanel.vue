@@ -110,15 +110,14 @@
 <script>
 import axios from "axios";
 import sha256 from 'crypto-js/sha256';
-import Config from "@/config.json";
 
 export default {
   name: "AdminPanel",
   props:['roomName'],
   data: function () {
     return{
-      BaseUrl: Config.SERVER_URL,
-      APIUrl: Config.API_URL,
+      BaseUrl: process.env.VUE_APP_SERVER_URL,
+      APIUrl: process.env.VUE_APP_API_URL,
       copyIconColor: "blue",
       voteCount: null,
       voteAvrage: null,
