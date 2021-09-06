@@ -31,6 +31,7 @@
 import RoomCreator from "@/components/RoomCreator.vue";
 import AdminPanel from "@/components/AdminPanel";
 import axios from "axios";
+import Config from "@/config.json";
 export default {
   name: "Admin",
   components: {RoomCreator,AdminPanel},
@@ -40,7 +41,7 @@ export default {
       snacktext: 'error',
       roomName: "",
       isLoading: false,
-      serverAdress: process.env.VUE_APP_API_URL,
+      serverAdress: Config.API_URL,
       roomExits: false
     }
   },
