@@ -60,6 +60,8 @@ export default {
           this.snackbar = true;
         }
         this.isLoading = false;
+      }).finally(()=>{
+        this.isLoading = false;
       })
 
     }

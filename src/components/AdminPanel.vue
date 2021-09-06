@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card>
+        <v-card class="topCard">
           <v-container>
             <v-row>
               <v-col>
@@ -31,15 +31,18 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col>
-                Refresh thingy
+              <v-col class="text-center pa-4">
+                Room Name: {{roomName}}
               </v-col>
             </v-row>
           </v-container>
         </v-card>
       </v-col>
       <v-col>
-        Admin Vote
+        <v-card class="topCard">
+          <apexchart type="area" height="200" :options="chartOptions" :series="series"></apexchart>
+
+        </v-card>
       </v-col>
     </v-row>
     <v-row>
@@ -65,10 +68,35 @@
               </v-col>
               <v-col>
                 <v-card class="text-center ma-6 pa-6">
-                  <p class="text-h4 text--primary">
-                    chart.... wip
-                  </p>
+                  <v-container>
+                    <v-row>
+                      <v-col>
+                        Reset Votes:
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="10" offset="">
+                        <v-btn
+                            color="blue"
+                            class="pa-16 ma-4"
+                            @click="resetRoom"
+                        >
+                          <v-icon
+                              left
+                              size="100"
+                              class="ma-1 mr-12"
+                          >
+                            mdi-autorenew
+                          </v-icon>
+                          <div class="bigTextBtn">
+                            Reset
+                          </div>
 
+
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-container>
                 </v-card>
               </v-col>
             </v-row>
@@ -81,6 +109,7 @@
 
 <script>
 import axios from "axios";
+import sha256 from 'crypto-js/sha256';
 
 export default {
   name: "AdminPanel",
@@ -92,12 +121,47 @@ export default {
       copyIconColor: "blue",
       voteCount: null,
       voteAvrage: null,
-      voteData:{
-        1:0,
-        2:0,
-        3:0,
-        4:0,
-        5:0,
+      intervalAPIRequest: null,
+      lastRequestDataHash: null,
+
+      series: [{
+        name: "Results",
+        data: [0,0,0,0,0],
+      }],
+      chartOptions: {
+        chart: {
+          type: 'area',
+          height: 300,
+          zoom: {
+            enabled: false
+          },
+          animations: {
+            enabled: true,
+            speed: 1500,
+            animateGradually: {
+              enabled: true,
+              delay: 250
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 1000
+            }
+          }
+        },
+        xaxis: {
+          categories: [1,2,3,4,5]
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'smooth'
+        },
+        title: {
+          text: 'Vote Results',
+          align: 'left'
+        },
+
       },
     }
   },
@@ -118,38 +182,66 @@ export default {
         setTimeout(()=> this.copyIconColor = "blue",5000)
       }
     },
+    resetRoom(){
+      axios({
+        method: 'post',
+        url: this.APIUrl + '/add/?roomName='+this.roomName,
+      })
+      this.clearData()
+
+    },
+    clearData(){
+      this.voteCount = 0
+      this.voteAvrage = null
+
+      let seriesVoteData =  [{
+        name: "Results",
+        data: [0,0,0,0,0],
+      }]
+      this.series = seriesVoteData;
+    },
     updateDataFromAPI(){
-      console.log("RequestToApiStarted")
       axios({
         method: 'get',
         url: this.APIUrl + '/room/?roomName='+this.roomName,
       }).then(response => {
-        if (response.status === 200) {
+        if (response.status === 200 && response.data.length > 0) {
           let votes = response.data
+
+          let currentResponseHash = sha256(JSON.stringify(votes))
+          if (this.lastRequestDataHash === currentResponseHash){return;}
+          this.lastRequestDataHash = currentResponseHash
+
           let count = votes.length
-          if (count === this.voteCount){return;}
           if (count === 0){ // Clear all
-            this.voteCount = 0
-            this.voteAvrage = null
-            this.voteData = {1:0,2:0,3:0,4:0,5:0}
+            this.clearData()
             return;
           }
           this.voteCount = count
           let sum = 0
           let resultVoteData = {1:0,2:0,3:0,4:0,5:0}
           votes.forEach((vote)=>{
-            sum += vote
-            resultVoteData[vote]++
+            let voteValue = parseInt(vote)
+            sum += voteValue
+            resultVoteData[voteValue]++
           })
           this.voteAvrage = parseFloat(sum / count).toFixed(2)
-          this.voteData = resultVoteData
+
+          let seriesVoteData =  [{
+            name: "Results",
+            data: Object.values(resultVoteData),
+          }]
+          this.series = seriesVoteData;
 
         }
       })
     },
   },
   created() {
-    setInterval(()=>{ this.updateDataFromAPI() },3000)
+    this.intervalAPIRequest = setInterval(()=>{ this.updateDataFromAPI() },3000)
+  },
+  beforeDestroy() {
+    clearInterval(this.intervalAPIRequest)
   }
 }
 </script>
@@ -158,4 +250,8 @@ export default {
 .bigNumber{
   font-size: 8rem;
 }
+.bigTextBtn{
+  font-size: 4rem;
+}
+
 </style>

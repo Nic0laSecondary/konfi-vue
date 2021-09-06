@@ -8,12 +8,12 @@
               <v-col></v-col>
             </v-row>
             <v-row>
-              <v-col>
+              <v-col class="text-center">
                 <v-rating
                     v-model="currentVote"
                     full-icon="$konfi"
                     empty-icon="$konfi_grey"
-                    size="300"
+                    size="12rem"
                 >
                 </v-rating>
               </v-col>
@@ -50,6 +50,7 @@ export default {
       currentVote: 0,
       hasVoted: false,
       serverUrl: process.env.VUE_APP_API_URL,
+      myFakeCookie: 0,
     }
   },
   methods:{
@@ -58,12 +59,11 @@ export default {
         console.log('votingNow')
         axios({
           method: 'post',
-          url: this.serverUrl + '/vote/?roomName='+this.roomName+'&vote='+this.currentVote,
+          url: this.serverUrl + '/vote/?roomName='+this.roomName+'&vote='+this.currentVote+ '&fakeCookie='+this.myFakeCookie,
         }).then(response => {
           if (response.status === 200) {
-            console.log('true')
+            this.myFakeCookie = parseInt(response.data)
           }
-          console.log('requested')
 
         })
 
