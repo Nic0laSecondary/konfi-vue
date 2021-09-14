@@ -185,7 +185,7 @@ export default {
     resetRoom(){
       axios({
         method: 'post',
-        url: this.APIUrl + '/add/?roomName='+this.roomName,
+        url: this.APIUrl + '/add?roomName='+this.roomName,
       })
       this.clearData()
 
@@ -203,7 +203,7 @@ export default {
     updateDataFromAPI(){
       axios({
         method: 'get',
-        url: this.APIUrl + '/room/?roomName='+this.roomName,
+        url: this.APIUrl + '/room?roomName='+this.roomName,
       }).then(response => {
         if (response.status === 200 && response.data.length > 0) {
           let votes = response.data

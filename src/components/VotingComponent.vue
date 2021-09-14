@@ -59,7 +59,7 @@ export default {
         console.log('votingNow')
         axios({
           method: 'post',
-          url: this.serverUrl + '/vote/?roomName='+this.roomName+'&vote='+this.currentVote+ '&fakeCookie='+this.myFakeCookie,
+          url: this.serverUrl + '/vote?roomName='+this.roomName+'&vote='+this.currentVote+ '&fakeCookie='+this.myFakeCookie,
         }).then(response => {
           if (response.status === 200) {
             this.myFakeCookie = parseInt(response.data)

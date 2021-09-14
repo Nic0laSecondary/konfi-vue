@@ -50,7 +50,7 @@ export default {
       console.log(this.roomName);
       axios({
         method: 'post',
-        url: this.serverAdress + '/add/?roomName='+this.roomName,
+        url: this.serverAdress + '/add?roomName='+this.roomName,
       }).then(response => {
         if (response.status === 200) {
           this.roomExits = true;
